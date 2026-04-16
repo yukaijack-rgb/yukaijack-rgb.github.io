@@ -24,7 +24,7 @@
 
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-    background: #f0ede8;
+    background: #daf5f5;
     color: var(--text-primary);
     min-height: 100vh;
     padding: 2rem 1rem;
@@ -232,7 +232,7 @@
   }
 
   .summary-card {
-    background: var(--bg-secondary);
+    background: #b8e8e8;
     border-radius: var(--radius-lg);
     padding: 1.25rem 1.5rem;
     margin-bottom: 1rem;
@@ -362,7 +362,7 @@
   <div class="note">
     ✦ 以上報價皆為起價，實際費用依稿件複雜度調整<br>
     ✦ 標示「+」表示起價，詳細報價請洽詢確認<br>
-    ✦ 製作週期依套餐與加購項目另行通知<br>
+    ✦ 製作週期依套餐與加購項目另行討論<br>
     ✦ 如有客製化需求，歡迎信件洽談
   </div>
 
@@ -376,14 +376,14 @@ const ADDONS = [
   {key:'4x4口型',         label:'4×4 口型',          prices:['1000','1000','included']},
   {key:'獸耳',            label:'獸耳',              prices:['800up','800up','800up']},
   {key:'尾巴',            label:'尾巴',              prices:['700up','700up','700up']},
-  {key:'特殊追加部位',    label:'特殊追加部位',       prices:['1000up','1000up','1000up'], note:'翅膀、角…etc.', maxQty:10},
-  {key:'簡易待機動畫',    label:'簡易待機動畫',       prices:['500up','500up','500up'],    note:'揮手、流淚…'},
-  {key:'進階待機動畫',    label:'進階待機動畫',       prices:['1000up','1000up','1500up'], note:'失去面補追蹤'},
+  {key:'特殊追加部位',    label:'特殊追加部位',       prices:['1000up','1000up','1000up'], note:'例如翅膀、角…等', maxQty:10},
+  {key:'簡易待機動畫',    label:'簡易待機動畫',       prices:['500up','500up','500up'],    note:'揮手、流淚…等'},
+  {key:'進階待機動畫',    label:'進階待機動畫',       prices:['1000up','1000up','1500up'], note:'例如失去面捕時睡著'},
   {key:'遊戲手把追蹤',    label:'遊戲手把追蹤',       prices:['500up','500up','500up'],    note:'差分本身另計'},
   {key:'繪圖畫筆追蹤',    label:'繪圖畫筆追蹤',       prices:['1000up','1000up','1000up'], note:'差分本身另計'},
-  {key:'配件開關',        label:'配件開關',           prices:['400up','400up','400up'],    note:'穿脫外套、帽子…'},
+  {key:'配件開關',        label:'配件開關',           prices:['400up','400up','400up'],    note:'例如穿脫外套、帽子…等'},
   {key:'表情特效開關',    label:'表情 / 特效開關',    prices:['200up','200up','200up'],    note:'愛心眼、蚊香眼…', maxQty:20},
-  {key:'頭髮差分',        label:'頭髮差分',           prices:['1000up','1500up','1500up'], note:'瀏海、髮色切換'},
+  {key:'頭髮差分',        label:'頭髮差分',           prices:['1000up','1500up','1500up'], note:'單獨髮型部件如瀏海等、髮色切換'},
   {key:'追加一組頭髮',    label:'追加一組頭髮',        prices:['1000up','2500up','2500up'], note:'完整髮型切換', maxQty:10},
   {key:'追加一組服裝',    label:'追加一組服裝',        prices:['800up','1000up','2000up'],  note:'整套衣物切換', maxQty:10},
   {key:'手差分',          label:'手差分',             prices:['1000up','1500up','1800up'], maxQty:10},
