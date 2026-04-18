@@ -6,7 +6,6 @@
 <title>Live2D 建模報價試算</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --bg-primary: #ffffff;
     --bg-secondary: #f5f5f3;
@@ -21,7 +20,6 @@
     --radius-md: 8px;
     --radius-lg: 12px;
   }
-
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
     background: #FFFFFF;
@@ -29,372 +27,358 @@
     min-height: 100vh;
     padding: 2rem 1rem;
   }
-
   .container {
-    max-width: 720px;
+    max-width: 780px;
     margin: 0 auto;
     background: var(--bg-primary);
     border-radius: var(--radius-lg);
     padding: 2rem 2rem 2.5rem;
     border: 0.5px solid var(--border-subtle);
   }
-
-  h1 {
-    font-size: 22px;
-    font-weight: 500;
-    color: var(--text-primary);
-    margin-bottom: 0.25rem;
+  .top-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-bottom: 1.5rem;
   }
-
-  .subtitle {
-    font-size: 13px;
+  .lang-btn {
+    padding: 4px 12px;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border-medium);
+    background: var(--bg-primary);
     color: var(--text-secondary);
-    margin-bottom: 2rem;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+    font-family: inherit;
   }
-
+  .lang-btn:hover { background: var(--bg-secondary); }
+  .lang-btn.active { background: var(--text-primary); color: #ffffff; border-color: var(--text-primary); }
+  h1 { font-size: 22px; font-weight: 500; color: var(--text-primary); margin-bottom: 0.25rem; }
+  .subtitle { font-size: 13px; color: var(--text-secondary); margin-bottom: 2rem; }
   .sec-label {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-    margin-bottom: 12px;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-secondary); margin-bottom: 12px;
   }
-
   .pkg-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-    margin-bottom: 2rem;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px; margin-bottom: 2rem;
   }
-
   @media (max-width: 520px) {
     .pkg-grid { grid-template-columns: 1fr; }
     .container { padding: 1.25rem 1rem 2rem; }
   }
-
   .pkg-card {
-    background: var(--bg-primary);
-    border: 0.5px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
-    padding: 1rem 1.1rem;
-    cursor: pointer;
-    transition: border-color 0.15s;
+    background: var(--bg-primary); border: 0.5px solid var(--border-subtle);
+    border-radius: var(--radius-lg); padding: 1rem 1.1rem;
+    cursor: pointer; transition: border-color 0.15s;
   }
-
-  .pkg-card.selected {
-    border: 2px solid var(--border-info);
-  }
-
+  .pkg-card.selected { border: 2px solid var(--border-info); }
   .pkg-badge {
-    font-size: 11px;
-    background: var(--bg-info);
-    color: var(--text-info);
-    padding: 2px 8px;
-    border-radius: var(--radius-md);
-    display: inline-block;
-    margin-bottom: 8px;
+    font-size: 11px; background: var(--bg-info); color: var(--text-info);
+    padding: 2px 8px; border-radius: var(--radius-md);
+    display: inline-block; margin-bottom: 8px;
   }
-
-  .pkg-name {
-    font-size: 17px;
-    font-weight: 500;
-    color: var(--text-primary);
-    margin-bottom: 6px;
-  }
-
-  .pkg-price {
-    font-size: 20px;
-    font-weight: 500;
-    color: var(--text-primary);
-    margin-bottom: 10px;
-  }
-
-  .pkg-price span {
-    font-size: 12px;
-    font-weight: 400;
-    color: var(--text-secondary);
-  }
-
-  .pkg-feature {
-    font-size: 12px;
-    color: var(--text-secondary);
-    line-height: 1.9;
-  }
-
+  .pkg-name { font-size: 17px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; }
+  .pkg-name-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 6px; }
+  .pkg-name-row .pkg-name { margin-bottom: 0; }
+  :lang(ja) .pkg-name { font-size: 14px; }
+  :lang(ja) .pkg-badge { font-size: 10px; padding: 2px 6px; }
+  :lang(en) .pkg-name { font-size: 14px; }
+  :lang(en) .pkg-badge { font-size: 10px; padding: 2px 6px; }
+  .pkg-price { font-size: 20px; font-weight: 500; color: var(--text-primary); margin-bottom: 10px; }
+  .pkg-price span { font-size: 12px; font-weight: 400; color: var(--text-secondary); }
+  .pkg-feature { font-size: 12px; color: var(--text-secondary); line-height: 1.9; }
   .pkg-feature .dot {
-    display: inline-block;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--text-secondary);
-    margin-right: 6px;
-    vertical-align: middle;
+    display: inline-block; width: 4px; height: 4px; border-radius: 50%;
+    background: var(--text-secondary); margin-right: 6px; vertical-align: middle;
   }
-
   .addon-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--bg-primary);
-    border: 0.5px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: 9px 12px;
-    margin-bottom: 6px;
-    transition: border-color 0.12s;
-    user-select: none;
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg-primary); border: 0.5px solid var(--border-subtle);
+    border-radius: var(--radius-md); padding: 9px 12px;
+    margin-bottom: 6px; transition: border-color 0.12s; user-select: none;
   }
-
-  .addon-row.selected {
-    border: 2px solid var(--border-info);
-    background: var(--bg-info);
-  }
-
-  .addon-row.included {
-    opacity: 0.6;
-  }
-
-  .addon-cb {
-    width: 15px;
-    height: 15px;
-    flex-shrink: 0;
-    accent-color: var(--border-info);
-    cursor: pointer;
-  }
-
-  .addon-name {
-    flex: 1;
-    font-size: 13px;
-    color: var(--text-primary);
-  }
-
-  .addon-note {
-    font-size: 11px;
-    color: var(--text-secondary);
-    margin-left: 4px;
-  }
-
-  .addon-price {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-primary);
-    white-space: nowrap;
-    min-width: 90px;
-    text-align: right;
-  }
-
-  .included-label {
-    font-size: 12px;
-    color: var(--text-success);
-    font-weight: 500;
-    white-space: nowrap;
-  }
-
-  .na-label {
-    font-size: 12px;
-    color: var(--text-secondary);
-  }
-
-  .qty-ctrl {
-    display: none;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-
-  .qty-ctrl.visible {
-    display: flex;
-  }
-
+  .addon-row.selected { border: 2px solid var(--border-info); background: var(--bg-info); }
+  .addon-row.included { opacity: 0.6; }
+  .addon-cb { width: 15px; height: 15px; flex-shrink: 0; accent-color: var(--border-info); cursor: pointer; }
+  .addon-name { flex: 1; font-size: 13px; color: var(--text-primary); }
+  .addon-note { font-size: 11px; color: var(--text-secondary); margin-left: 4px; }
+  .addon-price { font-size: 13px; font-weight: 500; color: var(--text-primary); white-space: nowrap; min-width: 90px; text-align: right; }
+  .included-label { font-size: 12px; color: var(--text-success); font-weight: 500; white-space: nowrap; }
+  .na-label { font-size: 12px; color: var(--text-secondary); }
+  .qty-ctrl { display: none; align-items: center; gap: 6px; flex-shrink: 0; }
+  .qty-ctrl.visible { display: flex; }
   .qty-btn {
-    width: 24px;
-    height: 24px;
-    border-radius: var(--radius-md);
-    border: 0.5px solid var(--border-medium);
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
+    width: 24px; height: 24px; border-radius: var(--radius-md);
+    border: 0.5px solid var(--border-medium); background: var(--bg-primary);
+    color: var(--text-primary); font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1; font-family: inherit;
   }
-
   .qty-btn:active { transform: scale(0.95); }
-
-  .qty-num {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-primary);
-    min-width: 16px;
-    text-align: center;
-  }
-
-  .summary-card {
-    background: #daf5f5;
-    border-radius: var(--radius-lg);
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .sum-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
-    color: var(--text-secondary);
-    padding: 3px 0;
-  }
-
+  .qty-num { font-size: 13px; font-weight: 500; color: var(--text-primary); min-width: 16px; text-align: center; }
+  .summary-card { background: #daf5f5; border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+  .sum-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); padding: 3px 0; }
   .sum-total {
-    display: flex;
-    justify-content: space-between;
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--text-primary);
-    border-top: 0.5px solid var(--border-subtle);
-    margin-top: 10px;
-    padding-top: 12px;
+    display: flex; justify-content: space-between; font-size: 18px; font-weight: 500;
+    color: var(--text-primary); border-top: 0.5px solid var(--border-subtle);
+    margin-top: 10px; padding-top: 12px;
   }
-
   .copy-btn {
-    width: 100%;
-    padding: 10px;
-    border-radius: var(--radius-md);
-    border: 0.5px solid var(--border-medium);
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-size: 13px;
-    cursor: pointer;
-    margin-bottom: 1.5rem;
-    transition: background 0.12s;
-    font-family: inherit;
+    width: 100%; padding: 10px; border-radius: var(--radius-md);
+    border: 0.5px solid var(--border-medium); background: var(--bg-primary);
+    color: var(--text-primary); font-size: 13px; cursor: pointer;
+    margin-bottom: 1.5rem; transition: background 0.12s; font-family: inherit;
   }
-
   .copy-btn:hover { background: var(--bg-secondary); }
   .copy-btn:active { transform: scale(0.98); }
-
-  .note {
-    font-size: 12px;
-    color: var(--text-secondary);
-    line-height: 1.9;
-  }
-
-  .no-pkg {
-    font-size: 12px;
-    color: var(--text-secondary);
-    padding: 6px 0;
-    font-style: italic;
-  }
-
-  .divider {
-    border: none;
-    border-top: 0.5px solid var(--border-subtle);
-    margin: 1.75rem 0;
-  }
+  .note { font-size: 12px; color: var(--text-secondary); line-height: 1.9; }
+  .no-pkg { font-size: 12px; color: var(--text-secondary); padding: 6px 0; font-style: italic; }
+  .divider { border: none; border-top: 0.5px solid var(--border-subtle); margin: 1.75rem 0; }
 </style>
 </head>
 <body>
 <div class="container">
 
-  <h1>Live2D 建模報價試算</h1>
-  <p class="subtitle">選擇套餐後勾選加購項目，即可預估報價</p>
+  <div class="top-bar">
+    <button class="lang-btn active" onclick="setLang('zh')">TW</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('ja')">JP</button>
+  </div>
 
-  <p class="sec-label">基礎套餐（單選）</p>
+  <h1 id="page-title"></h1>
+  <p class="subtitle" id="subtitle"></p>
+
+  <p class="sec-label" id="label-package"></p>
   <div class="pkg-grid">
-    <div class="pkg-card" id="pkg-0" data-price="5000" data-name="Q版" onclick="selectPkg(0)">
-      <div class="pkg-name">Q版</div>
-      <div class="pkg-price">NT$5,000 <span>+</span></div>
-      <div class="pkg-feature">
-        <div><span class="dot"></span>頭部角度 XYZ</div>
-        <div><span class="dot"></span>身體角度 Z</div>
-        <div><span class="dot"></span>口型 3×3</div>
-        <div><span class="dot"></span>物理晃動（簡易）</div>
-        <div><span class="dot"></span>果凍眼 / 呼吸 / 驚訝眼</div>
-        <div><span class="dot"></span>微笑眼 / 生氣 / 害羞</div>
-      </div>
+    <div class="pkg-card" id="pkg-0" data-price="5000" onclick="selectPkg(0)">
+      <div class="pkg-name" id="pkg-0-name"></div>
+      <div class="pkg-price" id="pkg-0-price"></div>
+      <div class="pkg-feature" id="pkg-0-features"></div>
     </div>
-    <div class="pkg-card" id="pkg-1" data-price="8000" data-name="正比基礎" onclick="selectPkg(1)">
-      <div class="pkg-name">正比基礎</div>
-      <div class="pkg-price">NT$8,000 <span>+</span></div>
-      <div class="pkg-feature">
-        <div><span class="dot"></span>頭部角度 XYZ</div>
-        <div><span class="dot"></span>身體角度 Z</div>
-        <div><span class="dot"></span>口型 3×3</div>
-        <div><span class="dot"></span>物理晃動（標準）</div>
-        <div><span class="dot"></span>果凍眼 / 呼吸 / 驚訝眼</div>
-        <div><span class="dot"></span>微笑眼 / 生氣 / 害羞</div>
-      </div>
+    <div class="pkg-card" id="pkg-1" data-price="8000" onclick="selectPkg(1)">
+      <div class="pkg-name" id="pkg-1-name"></div>
+      <div class="pkg-price" id="pkg-1-price"></div>
+      <div class="pkg-feature" id="pkg-1-features"></div>
     </div>
-    <div class="pkg-card" id="pkg-2" data-price="12000" data-name="正比標準" onclick="selectPkg(2)">
-      <div class="pkg-badge">推薦</div>
-      <div class="pkg-name">正比標準</div>
-      <div class="pkg-price">NT$12,000 <span>+</span></div>
-      <div class="pkg-feature">
-        <div><span class="dot"></span>頭部角度 XYZ</div>
-        <div><span class="dot"></span>身體角度 XYZ</div>
-        <div><span class="dot"></span>口型 4×4</div>
-        <div><span class="dot"></span>物理晃動（標準）</div>
-        <div><span class="dot"></span>包含 歪嘴 / 嘟嘴 </div>
-        <div><span class="dot"></span>果凍眼 / 呼吸 / 驚訝眼</div>
+    <div class="pkg-card" id="pkg-2" data-price="12000" onclick="selectPkg(2)">
+      <div class="pkg-name-row">
+        <div class="pkg-name" id="pkg-2-name"></div>
+        <div class="pkg-badge" id="badge-recommend"></div>
       </div>
+      <div class="pkg-price" id="pkg-2-price"></div>
+      <div class="pkg-feature" id="pkg-2-features"></div>
     </div>
   </div>
 
   <hr class="divider">
-
-  <p class="sec-label">加購項目（可複選）</p>
+  <p class="sec-label" id="label-addon"></p>
   <div id="addonList"></div>
 
   <hr class="divider">
-
-  <p class="sec-label">費用試算</p>
+  <p class="sec-label" id="label-estimate"></p>
   <div class="summary-card">
-    <div id="sumItems"><div class="no-pkg">尚未選擇套餐</div></div>
+    <div id="sumItems"></div>
     <div class="sum-total">
-      <span>預估總金額</span>
-      <span id="totalPrice">NT$0</span>
+      <span id="label-total"></span>
+      <span id="totalPrice"></span>
     </div>
   </div>
 
-  <button class="copy-btn" onclick="copyQuote()">複製報價明細</button>
-
-  <div class="note">
-    ✦ 以上報價皆為起價，實際費用依稿件複雜度調整<br>
-    ✦ 標示「+」表示起價，詳細報價請洽詢確認<br>
-    ✦ 製作週期依套餐與加購項目另行討論<br>
-    ✦ 如有客製化需求，歡迎信件洽談
-  </div>
+  <button class="copy-btn" id="btn-copy" onclick="copyQuote()"></button>
+  <div class="note" id="note-block"></div>
 
 </div>
-
 <script>
+// ── 幣值設定 ─────────────────────────────────────────
+const CURRENCY = {
+  zh: { symbol: 'NT$', rate: 1,    decimals: 0 },
+  en: { symbol: 'US$', rate: 1/30, decimals: 2 },
+  ja: { symbol: '¥',   rate: 1/0.2,decimals: 0 },
+};
+
+function fmtPrice(ntAmt, lang) {
+  const c = CURRENCY[lang];
+  const converted = ntAmt * c.rate;
+  const rounded = c.decimals === 0 ? Math.round(converted) : Math.round(converted * 100) / 100;
+  return c.symbol + rounded.toLocaleString(undefined, {
+    minimumFractionDigits: c.decimals,
+    maximumFractionDigits: c.decimals,
+  });
+}
+
+// ── 翻譯資料 ─────────────────────────────────────────
+const I18N = {
+  zh: {
+    page_title:'Live2D 建模報價試算',
+    subtitle:'選擇套餐後勾選加購項目，即可預估報價',
+    label_package:'基礎套餐（單選）',
+    label_addon:'加購項目（可複選）',
+    label_estimate:'費用試算',
+    badge_recommend:'推薦',
+    label_total:'預估總金額',
+    suffix_base_pkg:'（基礎套餐）',
+    btn_copy:'複製報價明細',
+    msg_copied:'已複製！',
+    msg_no_pkg:'尚未選擇套餐',
+    alert_select:'請先選擇套餐後再複製。',
+    status_included:'已包含在套餐內',
+    status_na:'此套餐不提供',
+    quote_title:'【Live2D 報價明細】',
+    quote_package:'套餐：',
+    quote_addons:'加購項目：',
+    quote_total:'預估總金額：',
+    quote_disclaimer:'※ 以上為起價，實際費用依稿件複雜度調整',
+    notes:[
+      '以上報價皆為起價，實際費用依稿件複雜度調整',
+      '標示「+」表示起價，詳細報價請洽詢確認',
+      '製作週期依套餐與加購項目另行討論',
+      '如有客製化需求，歡迎信件洽談',
+    ],
+    pkg_names:['Q版','正比基礎','正比標準'],
+    pkg_prices_nt:[5000,8000,12000],
+    pkg_features:[
+      ['頭部角度 XYZ','身體角度 Z','口型 3×3','物理晃動（簡易）','果凍眼 / 呼吸 / 驚訝眼','微笑眼 / 生氣 / 害羞'],
+      ['頭部角度 XYZ','身體角度 Z','口型 3×3','物理晃動（標準）','果凍眼 / 呼吸 / 驚訝眼','微笑眼 / 生氣 / 害羞'],
+      ['頭部角度 XYZ','身體角度 XYZ','口型 4×4','物理晃動（標準）','包含 歪嘴 / 嘟嘴','果凍眼 / 呼吸 / 驚訝眼','微笑眼 / 生氣 / 害羞'],
+    ],
+  },
+  en: {
+    page_title:'Live2D Model Price Estimator',
+    subtitle:'Select a package and add-ons to estimate your quote',
+    label_package:'Base Package (Select One)',
+    label_addon:'Add-ons (Multiple Select)',
+    label_estimate:'Price Estimate',
+    badge_recommend:'Recommended',
+    label_total:'Estimated Total',
+    suffix_base_pkg:' (Base Package)',
+    btn_copy:'Copy Quote',
+    msg_copied:'Copied!',
+    msg_no_pkg:'No package selected yet',
+    alert_select:'Please select a package before copying.',
+    status_included:'Included in package',
+    status_na:'Not available for this package',
+    quote_title:'[Live2D Price Quote]',
+    quote_package:'Package: ',
+    quote_addons:'Add-ons:',
+    quote_total:'Estimated Total: ',
+    quote_disclaimer:'※ All prices are starting rates and subject to change based on complexity',
+    notes:[
+      'All prices listed are starting rates and may vary based on complexity',
+      'Prices marked with「+」are starting rates. Please contact for a detailed quote',
+      'The production timeline will be determined based on the selected package and add-ons.',
+      'If you have any custom requests, please feel free to contact me via email.',
+    ],
+    pkg_names:['Chibi Style','Standard Basic','Standard Plus'],
+    pkg_prices_nt:[5000,8000,12000],
+    pkg_features:[
+      ['Face rotation XYZ','Body rotation Z','Mouth chart 3×3','Physics (Basic)','Jelly eyes / Breathing / Surprise eyes','Smile eyes / Angry / Blushing'],
+      ['Face rotation XYZ','Body rotation Z','Mouth chart 3×3','Physics (Standard)','Jelly eyes / Breathing / Surprise eyes','Smile eyes / Angry / Blushing'],
+      ['Face rotation XYZ','Body rotation XYZ','Mouth chart 4×4','Physics (Standard)','Includes smirk / pout','Jelly eyes / Breathing / Surprise eyes','Smile eyes / Angry / Blushing'],
+    ],
+  },
+  ja: {
+    page_title:'Live2D モデル料金シミュレーター',
+    subtitle:'プランを選択し、オプションを追加して料金をご確認ください',
+    label_package:'ベースプラン（一つ選択）',
+    label_addon:'追加オプション（複数選択可）',
+    label_estimate:'料金シミュレーション',
+    badge_recommend:'おすすめ',
+    label_total:'お見積り合計',
+    suffix_base_pkg:'（ベースプラン）',
+    btn_copy:'見積もりをコピー',
+    msg_copied:'コピーしました！',
+    msg_no_pkg:'まだプランが選択されていません',
+    alert_select:'プランを選択してからコピーしてください。',
+    status_included:'プランに含まれています',
+    status_na:'このプランでは提供されていません',
+    quote_title:'【Live2D 料金明細】',
+    quote_package:'プラン：',
+    quote_addons:'追加オプション：',
+    quote_total:'お見積り合計：',
+    quote_disclaimer:'※ 表示価格はすべて起算価格であり、制作内容によって変動します',
+    notes:[
+      '表示価格はすべて起算価格であり、制作内容の複雑さによって変動します',
+      '「+」が付いた価格は起算価格です。詳細はお問い合わせください',
+      '制作期間はプランおよび追加オプションに応じて別途ご相談となります。',
+      'カスタマイズのご要望がございましたら、メールにてお気軽にご相談ください。',
+    ],
+    pkg_names:['ちび','等身 ライトプラン','等身 フルプラン'],
+    pkg_prices_nt:[5000,8000,12000],
+    pkg_features:[
+      ['顔の動き XYZ','体の動き Z','口形 3×3','物理演算（シンプル）','ぷるぷる黒目 / 呼吸 / 驚き目','笑顔目 / 怒り / 照れ'],
+      ['顔の動き XYZ','体の動き Z','口形 3×3','物理演算（標準）','ぷるぷる黒目 / 呼吸 / 驚き目','笑顔目 / 怒り / 照れ'],
+      ['顔の動き XYZ','体の動き XYZ','口形 4×4','物理演算（標準）','ニヤリの口 / 頬ぷく 含む','ぷるぷる黒目 / 呼吸 / 驚き目','笑顔目 / 怒り / 照れ'],
+    ],
+  },
+};
+
+// ── 加購項目（所有 prices 完整定義）─────────────────
 const ADDONS = [
-  {key:'歪嘴',            label:'歪嘴',              prices:['150','200','included']},
-  {key:'嘟嘴',            label:'嘟嘴',              prices:['400','600','included']},
-  {key:'吐舌',            label:'吐舌',              prices:['2500','2500','3000']},
-  {key:'4x4口型',         label:'4×4 口型',          prices:['1000','1000','included']},
-  {key:'獸耳',            label:'獸耳',              prices:['800up','800up','800up']},
-  {key:'尾巴',            label:'尾巴',              prices:['700up','700up','700up']},
-  {key:'特殊追加部位',    label:'特殊追加部位',       prices:['1000up','1000up','1000up'], note:'例如翅膀、角…等', maxQty:10},
-  {key:'簡易待機動畫',    label:'簡易待機動畫',       prices:['500up','500up','500up'],    note:'揮手、流淚…等'},
-  {key:'進階待機動畫',    label:'進階待機動畫',       prices:['1000up','1000up','1500up'], note:'例如失去面捕時睡著'},
-  {key:'遊戲手把追蹤',    label:'遊戲手把追蹤',       prices:['500up','500up','500up'],    note:'差分本身另計'},
-  {key:'繪圖畫筆追蹤',    label:'繪圖畫筆追蹤',       prices:['1000up','1000up','1000up'], note:'差分本身另計'},
-  {key:'配件開關',        label:'配件開關',           prices:['400up','400up','400up'],    note:'例如穿脫外套、帽子…等'},
-  {key:'表情特效開關',    label:'表情 / 特效開關',    prices:['200up','200up','200up'],    note:'例如愛心眼、蚊香眼…', maxQty:20},
-  {key:'頭髮差分',        label:'頭髮差分',           prices:['1000up','1500up','1500up'], note:'單獨髮型部件如瀏海等、髮色切換'},
-  {key:'追加一組頭髮',    label:'追加一組頭髮',        prices:['1000up','2500up','2500up'], note:'完整髮型切換', maxQty:10},
-  {key:'追加一組服裝',    label:'追加一組服裝',        prices:['800up','1000up','2000up'],  note:'整套衣物切換', maxQty:10},
-  {key:'手差分',          label:'手差分',             prices:['1000up','1500up','1800up'], maxQty:10},
-  {key:'變成Q版',         label:'變成 Q 版',          prices:['na','5000','6000']},
-  {key:'吉祥物',          label:'吉祥物',             prices:['1500up','1500up','1500up']},
-  {key:'增加階段修改次數',label:'增加階段修改次數',    prices:['1000up','1000up','1000up'], note:'每階段可改兩次'},
+  {key:'歪嘴',            zh:'歪嘴',              en:'Smirk',                     ja:'ニヤリの口',
+   prices:['150','200','included']},
+  {key:'嘟嘴',            zh:'嘟嘴',              en:'Pout',                      ja:'頬ぷく',
+   prices:['400','600','included']},
+  {key:'吐舌',            zh:'吐舌',              en:'Tongue out',                ja:'舌出し',
+   prices:['2500','2500','3000']},
+  {key:'4x4口型',         zh:'4×4 口型',          en:'Mouth chart 4×4',           ja:'口形 4×4',
+   prices:['1000','1000','included']},
+  {key:'獸耳',            zh:'獸耳',              en:'Animal ears',               ja:'ケモ耳',
+   prices:['800up','800up','800up']},
+  {key:'尾巴',            zh:'尾巴',              en:'Tail',                      ja:'しっぽ',
+   prices:['700up','700up','700up']},
+  {key:'特殊追加部位',    zh:'特殊追加部位',       en:'Special extra parts',       ja:'特殊追加パーツ',
+   prices:['1000up','1000up','1000up'],
+   note:{zh:'例如翅膀、角…等',en:'For example, Wings, horns…etc.',ja:'例えば、翼や角など'}, maxQty:10},
+  {key:'簡易待機動畫',    zh:'簡易待機動畫',       en:'Basic idle animation',      ja:'シンプル待機モーション',
+   prices:['500up','500up','500up'],
+   note:{zh:'例如揮手、流淚…',en:'Waving, crying…',ja:'例えば、手を振る、涙を流す'}},
+  {key:'進階待機動畫',    zh:'進階待機動畫',       en:'Advanced idle animation',   ja:'高度な待機モーション',
+   prices:['1000up','1000up','1500up'],
+   note:{zh:'例如失去面補追蹤時會睡著',en:'For example, falling asleep while tracking lost',ja:'例えば、トラッキング消失時に眠ってしまうこと'}},
+  {key:'遊戲手把追蹤',    zh:'遊戲手把追蹤',       en:'Gamepad tracking',          ja:'ゲームパッドトラッキング',
+   prices:['500up','500up','500up'],
+   note:{zh:'差分本身另計',en:'Controller toggle priced separately',ja:'コントローラーのモデリングは別途'}},
+  {key:'繪圖畫筆追蹤',    zh:'繪圖畫筆追蹤',       en:'Drawing pen tracking',      ja:'ペントラッキング',
+   prices:['1000up','1000up','1000up'],
+   note:{zh:'差分本身另計',en:'Pen toggle priced separately',ja:'ペンのモデリングは別途'}},
+  {key:'配件開關',        zh:'配件開關',           en:'Accessory toggle',          ja:'アクセサリー切替',
+   prices:['400up','400up','400up'],
+   note:{zh:'例如穿脫外套、帽子…等',en:'For example, putting on and taking off jacket, hat…',ja:'例えば、コートや帽子を着脱することなど'}},
+  {key:'表情特效開關',    zh:'表情 / 特效開關',    en:'Expression / Effect toggle', ja:'表情 / エフェクト切替',
+   prices:['200up','200up','200up'],
+   note:{zh:'例如愛心眼、蚊香眼…',en:'For example, Heart eyes, spiral eyes…',ja:'例えば、ハート目、ぐるぐる目など'}, maxQty:20},
+  {key:'頭髮差分',        zh:'頭髮差分',           en:'Hair toggle',               ja:'髪型差分',
+   prices:['1000up','1500up','1500up'],
+   note:{zh:'單獨髮型部件如瀏海等、髮色切換',en:'For example, bangs, hair color swap',ja:'例えば、前髪と髪色切替'}},
+  {key:'追加一組頭髮',    zh:'追加一組頭髮',        en:'Add one hairstyle',         ja:'追加髪型（1セット）',
+   prices:['1000up','2500up','2500up'],
+   note:{zh:'完整髮型切換',en:'Full hairstyle swap',ja:'髪型デザイン切替'}, maxQty:10},
+  {key:'追加一組服裝',    zh:'追加一組服裝',        en:'Add one outfit',            ja:'追加衣装（1セット）',
+   prices:['800up','1000up','2000up'],
+   note:{zh:'整套衣物切換',en:'Full outfit swap',ja:'衣装デザイン切替'}, maxQty:10},
+  {key:'手差分',          zh:'手差分',             en:'Hand toggle',               ja:'腕ポーズ切り替え',
+   prices:['1000up','1500up','1800up'], maxQty:10},
+  {key:'變成Q版',         zh:'變成 Q 版',          en:'Add Chibi version',         ja:'ちびバージョン追加',
+   prices:['na','5000','6000']},
+  {key:'吉祥物',          zh:'吉祥物',             en:'Mascot',                    ja:'マスコット',
+   prices:['1500up','1500up','1500up']},
+  {key:'增加階段修改次數', zh:'增加階段修改次數',   en:'Extra revision per stage',  ja:'修正回数追加（段階ごと）',
+   prices:['1000up','1000up','1000up'],
+   note:{zh:'每階段可改兩次',en:'2 revisions per stage',ja:'各段階2回修正可能'}},
 ];
 
+// ── 狀態 ────────────────────────────────────────────
+let currentLang = 'zh';
 let selectedPkg = -1;
 const state = {};
 ADDONS.forEach(a => { state[a.key] = { checked: false, qty: 1 }; });
+
+// ── 工具 ─────────────────────────────────────────────
+function t(key) { return I18N[currentLang][key] ?? I18N.zh[key] ?? key; }
 
 function parsePrice(raw) {
   if (!raw || raw === 'na' || raw === 'included') return null;
@@ -403,10 +387,62 @@ function parsePrice(raw) {
   return isNaN(n) ? null : { val: n, up };
 }
 
+function renderAmt(ntVal, isUp) {
+  return fmtPrice(ntVal, currentLang) + (isUp ? '+' : '');
+}
+
+// ── 語言切換 ─────────────────────────────────────────
+function setLang(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang === 'zh' ? 'zh-Hant' : lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  applyLang();
+}
+
+function applyLang() {
+  const L = I18N[currentLang];
+  document.getElementById('page-title').textContent     = L.page_title;
+  document.getElementById('subtitle').textContent       = L.subtitle;
+  document.getElementById('label-package').textContent  = L.label_package;
+  document.getElementById('label-addon').textContent    = L.label_addon;
+  document.getElementById('label-estimate').textContent = L.label_estimate;
+  document.getElementById('badge-recommend').textContent= L.badge_recommend;
+  document.getElementById('label-total').textContent    = L.label_total;
+  document.getElementById('btn-copy').textContent       = L.btn_copy;
+  document.getElementById('note-block').innerHTML       = L.notes.map(n=>`✦ ${n}`).join('<br>');
+
+  // 套餐名稱、價格、功能
+  for (let i = 0; i < 3; i++) {
+    document.getElementById(`pkg-${i}-name`).textContent = L.pkg_names[i];
+    const ntPrice = L.pkg_prices_nt[i];
+    document.getElementById(`pkg-${i}-price`).innerHTML =
+      `${fmtPrice(ntPrice, currentLang)} <span>+</span>`;
+    document.getElementById(`pkg-${i}-features`).innerHTML =
+      L.pkg_features[i].map(f=>`<div><span class="dot"></span>${f}</div>`).join('');
+  }
+
+  // 加購項目文字更新（不重建 DOM，保留選取狀態）
+  ADDONS.forEach(a => {
+    const nameEl = document.querySelector(`#ar-${a.key} .addon-name`);
+    if (nameEl) {
+      const label = a[currentLang] || a.zh;
+      const noteText = a.note ? (a.note[currentLang] || a.note.zh) : '';
+      nameEl.innerHTML = label + (noteText ? `<span class="addon-note">${noteText}</span>` : '');
+    }
+    renderAddonPrice(a.key);
+  });
+
+  updateSummary();
+}
+
+// ── 加購項目建構（僅首次）────────────────────────────
 function buildAddonHTML() {
   document.getElementById('addonList').innerHTML = ADDONS.map(a => {
-    const noteHtml = a.note ? `<span class="addon-note">${a.note}</span>` : '';
-    const qtyHtml = a.maxQty ? `
+    const label    = a[currentLang] || a.zh;
+    const noteText = a.note ? (a.note[currentLang] || a.note.zh) : '';
+    const noteHtml = noteText ? `<span class="addon-note">${noteText}</span>` : '';
+    const qtyHtml  = a.maxQty ? `
       <div class="qty-ctrl" id="qc-${a.key}">
         <button class="qty-btn" onclick="changeQty(event,'${a.key}',-1)">−</button>
         <span class="qty-num" id="qn-${a.key}">1</span>
@@ -414,16 +450,40 @@ function buildAddonHTML() {
       </div>` : '';
     return `<div class="addon-row" id="ar-${a.key}" data-key="${a.key}">
       <input type="checkbox" class="addon-cb" id="cb-${a.key}" onchange="onCheckChange('${a.key}')">
-      <span class="addon-name">${a.label}${noteHtml}</span>
+      <span class="addon-name">${label}${noteHtml}</span>
       ${qtyHtml}
       <span class="addon-price" id="ap-${a.key}">—</span>
     </div>`;
   }).join('');
 }
 
+function renderAddonPrice(key) {
+  const a   = ADDONS.find(x => x.key === key);
+  const el  = document.getElementById('ap-' + key);
+  const row = document.getElementById('ar-' + key);
+  if (!a || !el || !row) return;
+  if (selectedPkg === -1) { el.textContent = '—'; row.classList.remove('included'); return; }
+  const raw = a.prices[selectedPkg];
+  if (raw === 'included') {
+    el.innerHTML = `<span class="included-label">${t('status_included')}</span>`;
+    row.classList.add('included');
+    deselect(key); return;
+  }
+  row.classList.remove('included');
+  if (raw === 'na') {
+    el.innerHTML = `<span class="na-label">${t('status_na')}</span>`;
+    deselect(key); return;
+  }
+  const p = parsePrice(raw);
+  if (!p || p.val === null) { el.textContent = '—'; return; }
+  const qty = state[key].qty;
+  const base = renderAmt(p.val, p.up);
+  el.textContent = qty > 1 ? `${base} ×${qty}` : base;
+}
+
 function onCheckChange(key) {
   if (selectedPkg === -1) { document.getElementById('cb-' + key).checked = false; return; }
-  const a = ADDONS.find(x => x.key === key);
+  const a   = ADDONS.find(x => x.key === key);
   const raw = a.prices[selectedPkg];
   if (raw === 'included' || raw === 'na') { document.getElementById('cb-' + key).checked = false; return; }
   const p = parsePrice(raw);
@@ -431,7 +491,7 @@ function onCheckChange(key) {
   const checked = document.getElementById('cb-' + key).checked;
   state[key].checked = checked;
   const row = document.getElementById('ar-' + key);
-  const qc = document.getElementById('qc-' + key);
+  const qc  = document.getElementById('qc-' + key);
   row.classList.toggle('selected', checked);
   if (qc) qc.classList.toggle('visible', checked);
   if (!checked) { state[key].qty = 1; const qn = document.getElementById('qn-' + key); if (qn) qn.textContent = '1'; }
@@ -449,41 +509,17 @@ function changeQty(event, key, delta) {
   updateSummary();
 }
 
-function renderAddonPrice(key) {
-  const a = ADDONS.find(x => x.key === key);
-  const el = document.getElementById('ap-' + key);
-  const row = document.getElementById('ar-' + key);
-  if (!a || !el || !row) return;
-  if (selectedPkg === -1) { el.textContent = '—'; row.classList.remove('included'); return; }
-  const raw = a.prices[selectedPkg];
-  if (raw === 'included') {
-    el.innerHTML = '<span class="included-label">已包含在套餐內</span>';
-    row.classList.add('included');
-    deselect(key); return;
-  }
-  row.classList.remove('included');
-  if (raw === 'na') {
-    el.innerHTML = '<span class="na-label">此套餐不提供</span>';
-    deselect(key); return;
-  }
-  const p = parsePrice(raw);
-  if (!p || p.val === null) { el.textContent = '—'; return; }
-  const qty = state[key].qty;
-  const suffix = p.up ? '+' : '';
-  el.textContent = qty > 1 ? `NT$${p.val.toLocaleString()}${suffix} ×${qty}` : `NT$${p.val.toLocaleString()}${suffix}`;
-}
-
 function deselect(key) {
   if (!state[key].checked) return;
   state[key].checked = false; state[key].qty = 1;
-  const cb = document.getElementById('cb-' + key);
+  const cb  = document.getElementById('cb-' + key);
   const row = document.getElementById('ar-' + key);
-  const qc = document.getElementById('qc-' + key);
-  const qn = document.getElementById('qn-' + key);
-  if (cb) cb.checked = false;
+  const qc  = document.getElementById('qc-' + key);
+  const qn  = document.getElementById('qn-' + key);
+  if (cb)  cb.checked = false;
   if (row) row.classList.remove('selected');
-  if (qc) qc.classList.remove('visible');
-  if (qn) qn.textContent = '1';
+  if (qc)  qc.classList.remove('visible');
+  if (qn)  qn.textContent = '1';
 }
 
 function selectPkg(idx) {
@@ -501,61 +537,69 @@ function selectPkg(idx) {
 
 function updateSummary() {
   const container = document.getElementById('sumItems');
-  const totalEl = document.getElementById('totalPrice');
-  let total = 0, rows = '';
+  const totalEl   = document.getElementById('totalPrice');
+  let totalNT = 0, rows = '';
+
   if (selectedPkg !== -1) {
-    const p = parseInt(document.getElementById('pkg-' + selectedPkg).dataset.price);
-    total += p;
-    rows += `<div class="sum-row"><span>${document.getElementById('pkg-' + selectedPkg).dataset.name}（基礎套餐）</span><span>NT$${p.toLocaleString()}+</span></div>`;
+    const ntPrice = I18N[currentLang].pkg_prices_nt[selectedPkg];
+    const name    = I18N[currentLang].pkg_names[selectedPkg];
+    totalNT += ntPrice;
+    rows += `<div class="sum-row"><span>${name}${t('suffix_base_pkg')}</span><span>${renderAmt(ntPrice, true)}</span></div>`;
   }
+
   ADDONS.forEach(a => {
     if (!state[a.key].checked || selectedPkg === -1) return;
     const raw = a.prices[selectedPkg];
     if (raw === 'included' || raw === 'na') return;
     const p = parsePrice(raw);
     if (!p || p.val === null) return;
-    const qty = state[a.key].qty;
-    const subtotal = p.val * qty;
-    total += subtotal;
-    const suffix = p.up ? '+' : '';
+    const qty      = state[a.key].qty;
+    const subtotalNT = p.val * qty;
+    totalNT += subtotalNT;
+    const label    = a[currentLang] || a.zh;
     const qtyLabel = qty > 1 ? ` ×${qty}` : '';
-    rows += `<div class="sum-row"><span>${a.label}${qtyLabel}</span><span>+NT$${subtotal.toLocaleString()}${suffix}</span></div>`;
+    rows += `<div class="sum-row"><span>${label}${qtyLabel}</span><span>+${renderAmt(subtotalNT, p.up)}</span></div>`;
   });
-  if (!rows) rows = '<div class="no-pkg">尚未選擇套餐</div>';
+
+  if (!rows) rows = `<div class="no-pkg">${t('msg_no_pkg')}</div>`;
   container.innerHTML = rows;
-  totalEl.textContent = 'NT$' + total.toLocaleString() + (selectedPkg !== -1 ? '+' : '');
+  totalEl.textContent = selectedPkg !== -1
+    ? renderAmt(totalNT, true)
+    : fmtPrice(0, currentLang);
 }
 
 function copyQuote() {
-  if (selectedPkg === -1) { alert('請先選擇套餐後再複製。'); return; }
-  const pkgName = document.getElementById('pkg-' + selectedPkg).dataset.name;
-  const pkgPrice = parseInt(document.getElementById('pkg-' + selectedPkg).dataset.price);
-  let lines = ['【Live2D 報價明細】', '', `套餐：${pkgName}　NT$${pkgPrice.toLocaleString()}+`];
-  let addonLines = [], total = pkgPrice;
+  if (selectedPkg === -1) { alert(t('alert_select')); return; }
+  const pkgName  = I18N[currentLang].pkg_names[selectedPkg];
+  const ntPrice  = I18N[currentLang].pkg_prices_nt[selectedPkg];
+  let lines = [t('quote_title'), '', `${t('quote_package')}${pkgName}　${renderAmt(ntPrice, true)}`];
+  let addonLines = [], totalNT = ntPrice;
   ADDONS.forEach(a => {
     if (!state[a.key].checked) return;
     const raw = a.prices[selectedPkg];
     if (raw === 'included' || raw === 'na') return;
     const p = parsePrice(raw);
     if (!p || p.val === null) return;
-    const qty = state[a.key].qty;
-    const subtotal = p.val * qty;
-    total += subtotal;
-    const suffix = p.up ? '+' : '';
+    const qty        = state[a.key].qty;
+    const subtotalNT = p.val * qty;
+    totalNT += subtotalNT;
+    const label    = a[currentLang] || a.zh;
     const qtyLabel = qty > 1 ? ` ×${qty}` : '';
-    addonLines.push(`・${a.label}${qtyLabel}　+NT$${subtotal.toLocaleString()}${suffix}`);
+    addonLines.push(`・${label}${qtyLabel}　+${renderAmt(subtotalNT, p.up)}`);
   });
-  if (addonLines.length > 0) { lines.push('', '加購項目：'); addonLines.forEach(l => lines.push(l)); }
-  lines.push('', `預估總金額：NT$${total.toLocaleString()}+`, '', '※ 以上為起價，實際費用依稿件複雜度調整');
+  if (addonLines.length > 0) { lines.push('', t('quote_addons')); addonLines.forEach(l => lines.push(l)); }
+  lines.push('', `${t('quote_total')}${renderAmt(totalNT, true)}`, '', t('quote_disclaimer'));
   navigator.clipboard.writeText(lines.join('\n')).then(() => {
-    const btn = document.querySelector('.copy-btn');
+    const btn  = document.getElementById('btn-copy');
     const orig = btn.textContent;
-    btn.textContent = '已複製！';
+    btn.textContent = t('msg_copied');
     setTimeout(() => { btn.textContent = orig; }, 1800);
-  }).catch(() => { prompt('請手動複製以下內容：', lines.join('\n')); });
+  }).catch(() => { prompt('', lines.join('\n')); });
 }
 
+// ── 初始化 ───────────────────────────────────────────
 buildAddonHTML();
+applyLang();
 </script>
 </body>
 </html>
