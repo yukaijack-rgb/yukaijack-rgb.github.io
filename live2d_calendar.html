@@ -541,32 +541,50 @@ document.getElementById('next-btn').onclick = () => {
 };
 
 // ── 載入 CSV 並渲染 ───────────────────────────────────
+function splitCSVLine(line) {
+  const cols = [];
+  let cur = '', inQuote = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') { inQuote = !inQuote; }
+    else if (ch === ',' && !inQuote) { cols.push(cur.trim()); cur = ''; }
+    else { cur += ch; }
+  }
+  cols.push(cur.trim());
+  return cols;
+}
+
 function parseCSV(text) {
-  const lines = text.trim().split(/\r?\n/);
-  // 第1列為說明、第2列為欄位名稱、第3列起為資料
-  const dataLines = lines.slice(2);
-  return dataLines
+  const lines = text.trim().split(/\r?\n/).filter(l => l.trim());
+
+  // 找到含有 'name' 欄位名稱的那一列作為 header
+  let headerIdx = -1;
+  for (let i = 0; i < lines.length; i++) {
+    const cols = splitCSVLine(lines[i]);
+    if (cols.some(c => c.trim().toLowerCase() === 'name')) {
+      headerIdx = i;
+      break;
+    }
+  }
+  if (headerIdx === -1) return [];
+
+  const headers = splitCSVLine(lines[headerIdx]).map(h => h.trim().toLowerCase());
+  const get = (cols, key) => (cols[headers.indexOf(key)] || '').trim();
+
+  return lines.slice(headerIdx + 1)
     .map((line, idx) => {
-      // 處理欄位中可能含逗號的情況（用雙引號包住）
-      const cols = [];
-      let cur = '', inQuote = false;
-      for (let i = 0; i < line.length; i++) {
-        const ch = line[i];
-        if (ch === '"') { inQuote = !inQuote; }
-        else if (ch === ',' && !inQuote) { cols.push(cur.trim()); cur = ''; }
-        else { cur += ch; }
-      }
-      cols.push(cur.trim());
-      if (cols.length < 7 || !cols[0]) return null;
+      const cols = splitCSVLine(line);
+      const name = get(cols, 'name');
+      if (!name) return null;
       return {
-        id: idx,
-        name:     cols[0],
-        type:     cols[1],
-        start:    cols[2],
-        end:      cols[3],
-        due:      cols[4],
-        status:   cols[5],
-        colorIdx: parseInt(cols[6]) || 0,
+        id:       idx,
+        name:     name,
+        type:     get(cols, 'type'),
+        start:    get(cols, 'start'),
+        end:      get(cols, 'end'),
+        due:      get(cols, 'due'),
+        status:   get(cols, 'status'),
+        colorIdx: parseInt(get(cols, 'coloridx')) || 0,
       };
     })
     .filter(Boolean);
