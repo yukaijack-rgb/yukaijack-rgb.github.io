@@ -270,7 +270,7 @@ body {
 /* ── Footer ── */
 .footer {
   margin-top: 2rem;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
   font-weight: 300;
   line-height: 1.9;
@@ -292,7 +292,7 @@ body {
   <div class="header">
     <div class="header-left">
       <h1>製作進度月曆</h1>
-      <p>最後更新：2025 / 07 / 01　　色塊為製作期間，圓點為預計完成日</p>
+      <p id="last-updated">　　色塊為製作期間，圓點為預計完成日</p>
     </div>
     <div class="nav-group">
       <button class="nav-btn" id="prev-btn">‹</button>
@@ -302,12 +302,6 @@ body {
   </div>
 
   <div class="legend">
-    <div class="legend-item">
-      <div class="legend-bar" style="background:var(--c0)"></div>委託人 A
-    </div>
-    <div class="legend-item">
-      <div class="legend-bar" style="background:var(--c1)"></div>委託人 B
-    </div>
     <div class="legend-item">
       <div class="legend-dot-end" style="border-color:var(--ink)"></div>預計完成日
     </div>
@@ -330,7 +324,13 @@ body {
 
   <div class="footer">
     ✦ 製作期間與完成日為預估，實際時程可能依製作情況調整<br>
-    ✦ 如有疑問請透過聯絡方式與我確認
+    ✦ 如有疑問請透過聯絡方式與我確認<br>
+    <br>
+    ✦ 制作期間および納品日はあくまで目安となります。実際のスケジュールは制作状況により変更される場合があります。<br>
+    ✦ ご不明な点がございましたら、お気軽にご連絡ください。<br>
+    <br>
+    ✦ The production period and delivery date are estimates only. The actual schedule may vary depending on the production progress.<br>
+    ✦ If you have any questions, please feel free to contact me via the provided contact methods.
   </div>
 
 </div>
@@ -603,6 +603,9 @@ async function loadAndRender() {
     if (!res.ok) throw new Error('fetch failed');
     const text = await res.text();
     CASES = parseCSV(text);
+    const d = new Date();
+    const dateStr = `${d.getFullYear()} / ${String(d.getMonth()+1).padStart(2,'0')} / ${String(d.getDate()).padStart(2,'0')}`;
+    document.getElementById('last-updated').textContent = '最後更新：' + dateStr + '　　色塊為製作期間，圓點為預計完成日';
     render();
   } catch (e) {
     showLoading('資料載入失敗，請稍後再試。');
