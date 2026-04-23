@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>製作進度月曆</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #faf8f4;
+  --ink:   #1c1917;
+  --muted: #78716c;
+  --line:  rgba(28,25,23,0.1);
+  --today-bg: #1c1917;
+  --today-fg: #faf8f4;
+
+  --c0: #0d9488; --c0l: #f0fdfa; --c0t: #0f766e;
+  --c1: #7c3aed; --c1l: #f5f3ff; --c1t: #6d28d9;
+  --c2: #d97706; --c2l: #fffbeb; --c2t: #b45309;
+  --c3: #e11d48; --c3l: #fff1f2; --c3t: #be123c;
+  --c4: #0284c7; --c4l: #f0f9ff; --c4t: #0369a1;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem;
+}
+
+.wrap { max-width: 900px; margin: 0 auto; }
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.header-left h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin-bottom: 3px;
+}
+
+.header-left p { font-size: 12px; color: var(--muted); font-weight: 300; }
+
+.nav-group { display: flex; align-items: center; gap: 12px; }
+
+.month-label {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  font-weight: 400;
+  min-width: 140px;
+  text-align: center;
+}
+
+.nav-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.12s;
+  font-family: inherit;
+}
+.nav-btn:hover { background: var(--cream); }
+
+/* ── Legend ── */
+.legend {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.legend-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--muted);
+}
+
+.legend-bar {
+  width: 20px; height: 8px; border-radius: 99px;
+}
+
+.legend-dot-end {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid;
+  flex-shrink: 0;
+}
+
+/* ── Calendar grid ── */
+.cal-grid {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--line);
+}
+
+.cal-weekday {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  padding: 10px 0;
+  letter-spacing: 0.06em;
+}
+
+.cal-weekday.sun { color: #e11d48; }
+.cal-weekday.sat { color: #0284c7; }
+
+.cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.cal-cell {
+  min-height: 88px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 6px 4px 4px;
+  position: relative;
+  vertical-align: top;
+}
+
+.cal-cell:nth-child(7n) { border-right: none; }
+.cal-cell.last-row { border-bottom: none; }
+.cal-cell.other-month { background: #fafaf9; }
+
+.day-num {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  margin-bottom: 2px;
+  flex-shrink: 0;
+}
+
+.cal-cell.today .day-num {
+  background: var(--today-bg);
+  color: var(--today-fg);
+  font-weight: 500;
+}
+
+.cal-cell.cur-month .day-num { color: var(--ink); }
+.cal-cell.sunday .day-num  { color: #e11d48; }
+.cal-cell.saturday .day-num { color: #0284c7; }
+.cal-cell.today .day-num { color: var(--today-fg) !important; }
+
+/* ── Event bars ── */
+.event-bars { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; }
+
+.event-bar {
+  height: 7px;
+  border-radius: 99px;
+  opacity: 0.85;
+  position: relative;
+}
+
+/* left/right edge rounding control */
+.event-bar.start  { border-top-left-radius: 99px; border-bottom-left-radius: 99px; margin-left: 2px; }
+.event-bar.end    { border-top-right-radius: 99px; border-bottom-right-radius: 99px; margin-right: 2px; }
+.event-bar.mid    { border-radius: 0; }
+.event-bar.single { border-radius: 99px; margin-left: 2px; margin-right: 2px; }
+.event-bar.start.end { border-radius: 99px; margin-left: 2px; margin-right: 2px; }
+
+/* ── Due marker ── */
+.due-marker {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid;
+  background: #fff;
+  position: absolute;
+  right: 3px; top: 3px;
+  z-index: 2;
+}
+
+/* ── Tooltip ── */
+.cal-cell { cursor: default; }
+.cal-cell:hover .tooltip { display: block; }
+
+.tooltip {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 11px;
+  line-height: 1.6;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  min-width: 150px;
+}
+
+.tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-bottom-color: var(--ink);
+}
+
+.tooltip-name { font-weight: 500; margin-bottom: 2px; }
+.tooltip-detail { color: rgba(255,255,255,0.7); }
+
+/* ── Case list below calendar ── */
+.case-list {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.case-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+}
+
+.case-color-bar {
+  width: 4px; height: 32px;
+  border-radius: 99px;
+  flex-shrink: 0;
+}
+
+.case-info { flex: 1; }
+.case-name { font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+.case-detail { font-size: 11px; color: var(--muted); font-weight: 300; }
+.case-dates { font-size: 12px; color: var(--muted); text-align: right; white-space: nowrap; }
+.case-dates span { display: block; }
+
+.status-pill {
+  font-size: 11px; font-weight: 500;
+  padding: 3px 10px; border-radius: 99px;
+}
+
+/* ── Footer ── */
+.footer {
+  margin-top: 2rem;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.9;
+  border-top: 1px solid var(--line);
+  padding-top: 1.25rem;
+}
+
+@media (max-width: 600px) {
+  .cal-cell { min-height: 60px; }
+  .day-num { font-size: 11px; width: 18px; height: 18px; }
+  .event-bar { height: 5px; }
+  .case-dates { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="header-left">
+      <h1>製作進度月曆</h1>
+      <p>最後更新：2025 / 07 / 01　　色塊為製作期間，圓點為預計完成日</p>
+    </div>
+    <div class="nav-group">
+      <button class="nav-btn" id="prev-btn">‹</button>
+      <div class="month-label" id="month-label"></div>
+      <button class="nav-btn" id="next-btn">›</button>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-bar" style="background:var(--c0)"></div>委託人 A
+    </div>
+    <div class="legend-item">
+      <div class="legend-bar" style="background:var(--c1)"></div>委託人 B
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot-end" style="border-color:var(--ink)"></div>預計完成日
+    </div>
+  </div>
+
+  <div class="cal-grid">
+    <div class="cal-weekdays">
+      <div class="cal-weekday sun">日</div>
+      <div class="cal-weekday">一</div>
+      <div class="cal-weekday">二</div>
+      <div class="cal-weekday">三</div>
+      <div class="cal-weekday">四</div>
+      <div class="cal-weekday">五</div>
+      <div class="cal-weekday sat">六</div>
+    </div>
+    <div class="cal-days" id="cal-days"></div>
+  </div>
+
+  <div class="case-list" id="case-list"></div>
+
+  <div class="footer">
+    ✦ 製作期間與完成日為預估，實際時程可能依製作情況調整<br>
+    ✦ 如有疑問請透過聯絡方式與我確認
+  </div>
+
+</div>
+
+<script>
+// ── Google Sheets CSV 連結 ────────────────────────────
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQgt2ZAUlUg-hDg_QqafGc9-8uFDyWwVCdXW7FMPobCdmq49-GUYn1D7ztnDxy-0g/pub?gid=605919640&single=true&output=csv';
+
+let CASES = [];
+
+// ── 顏色對應 ──────────────────────────────────────────
+const COLORS = [
+  { bar: 'var(--c0)', light: 'var(--c0l)', text: 'var(--c0t)' },
+  { bar: 'var(--c1)', light: 'var(--c1l)', text: 'var(--c1t)' },
+  { bar: 'var(--c2)', light: 'var(--c2l)', text: 'var(--c2t)' },
+  { bar: 'var(--c3)', light: 'var(--c3l)', text: 'var(--c3t)' },
+  { bar: 'var(--c4)', light: 'var(--c4l)', text: 'var(--c4t)' },
+];
+
+// ── 狀態 ─────────────────────────────────────────────
+const today = new Date();
+today.setHours(0,0,0,0);
+let viewYear  = today.getFullYear();
+let viewMonth = today.getMonth(); // 0-indexed
+
+// ── 工具 ─────────────────────────────────────────────
+function parseDate(s) {
+  const [y,m,d] = s.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  dt.setHours(0,0,0,0);
+  return dt;
+}
+
+function sameDay(a, b) {
+  return a.getFullYear()===b.getFullYear() &&
+         a.getMonth()===b.getMonth() &&
+         a.getDate()===b.getDate();
+}
+
+function fmtDate(s) {
+  const d = parseDate(s);
+  return `${d.getFullYear()} / ${String(d.getMonth()+1).padStart(2,'0')} / ${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// ── 月曆渲染 ─────────────────────────────────────────
+function render() {
+  // month label
+  const monthNames = ['January','February','March','April','May','June',
+                      'July','August','September','October','November','December'];
+  document.getElementById('month-label').textContent =
+    `${viewYear} / ${String(viewMonth+1).padStart(2,'0')}`;
+
+  const container = document.getElementById('cal-days');
+  container.innerHTML = '';
+
+  // first day of month
+  const firstDay = new Date(viewYear, viewMonth, 1);
+  const lastDay  = new Date(viewYear, viewMonth+1, 0);
+  const startDow = firstDay.getDay(); // 0=Sun
+  const totalDays = lastDay.getDate();
+
+  // total cells (fill to complete weeks)
+  const totalCells = Math.ceil((startDow + totalDays) / 7) * 7;
+  const totalRows  = totalCells / 7;
+
+  for (let i = 0; i < totalCells; i++) {
+    const cellDate = new Date(viewYear, viewMonth, 1 - startDow + i);
+    cellDate.setHours(0,0,0,0);
+
+    const isCurMonth = cellDate.getMonth() === viewMonth && cellDate.getFullYear() === viewYear;
+    const isToday    = sameDay(cellDate, today);
+    const dow        = cellDate.getDay();
+    const rowIdx     = Math.floor(i / 7);
+    const isLastRow  = rowIdx === totalRows - 1;
+
+    const cell = document.createElement('div');
+    cell.className = [
+      'cal-cell',
+      isCurMonth ? 'cur-month' : 'other-month',
+      isToday    ? 'today'    : '',
+      dow === 0  ? 'sunday'   : '',
+      dow === 6  ? 'saturday' : '',
+      isLastRow  ? 'last-row' : '',
+    ].filter(Boolean).join(' ');
+
+    // day number
+    const dayNum = document.createElement('div');
+    dayNum.className = 'day-num';
+    dayNum.textContent = cellDate.getDate();
+    cell.appendChild(dayNum);
+
+    // event bars container
+    const barsEl = document.createElement('div');
+    barsEl.className = 'event-bars';
+
+    // due markers container (absolute)
+    const dueContainer = document.createElement('div');
+    dueContainer.style.cssText = 'position:absolute;top:4px;right:4px;display:flex;flex-direction:column;gap:2px;align-items:flex-end;';
+
+    const tooltipLines = [];
+    let dueLine = '';
+
+    CASES.forEach(c => {
+      const startDt = parseDate(c.start);
+      const endDt   = parseDate(c.end);
+      const dueDt   = parseDate(c.due);
+      const col     = COLORS[c.colorIdx];
+
+      const isDone = c.status === '交件完成';
+
+      // draw bar if cellDate is within [start, end]
+      if (cellDate >= startDt && cellDate <= endDt) {
+        const bar = document.createElement('div');
+        const isStart  = sameDay(cellDate, startDt);
+        const isEnd    = sameDay(cellDate, endDt);
+        let edgeClass  = 'mid';
+        if (isStart && isEnd) edgeClass = 'single';
+        else if (isStart)     edgeClass = 'start';
+        else if (isEnd)       edgeClass = 'end';
+
+        bar.className = `event-bar ${edgeClass}`;
+        bar.style.background = col.bar;
+        if (isDone) bar.style.opacity = '0.25';
+        barsEl.appendChild(bar);
+
+        if (isStart) tooltipLines.push(`${c.name}　開始${isDone ? '（已完成）' : ''}`);
+        if (isEnd)   tooltipLines.push(`${c.name}　製作完成`);
+      }
+
+      // due dot
+      if (sameDay(cellDate, dueDt)) {
+        const dot = document.createElement('div');
+        dot.className = 'due-marker';
+        dot.style.borderColor = isDone ? '#ccc' : col.bar;
+        dot.style.opacity = isDone ? '0.3' : '1';
+        dot.style.position = 'static';
+        dot.style.flexShrink = '0';
+        dueContainer.appendChild(dot);
+        dueLine += `${c.name} 交件${isDone ? '（已完成）' : ''}`;
+      }
+    });
+
+    cell.appendChild(barsEl);
+    if (dueContainer.children.length > 0) {
+      dueContainer.style.position = 'absolute';
+      dueContainer.style.top = '4px';
+      dueContainer.style.right = '4px';
+      cell.appendChild(dueContainer);
+    }
+
+    // tooltip
+    const allLines = [...tooltipLines];
+    if (dueLine) allLines.push(dueLine);
+    if (allLines.length > 0) {
+      const tip = document.createElement('div');
+      tip.className = 'tooltip';
+      tip.innerHTML = allLines.map((l,i) => {
+        if (i === 0) return `<div class="tooltip-name">${fmtDate(cellDate.toISOString().slice(0,10))}</div><div class="tooltip-detail">${l}</div>`;
+        return `<div class="tooltip-detail">${l}</div>`;
+      }).join('');
+      // fix date format for tooltip
+      const dateStr = `${cellDate.getFullYear()}-${String(cellDate.getMonth()+1).padStart(2,'0')}-${String(cellDate.getDate()).padStart(2,'0')}`;
+      tip.querySelector('.tooltip-name').textContent = fmtDate(dateStr);
+      cell.appendChild(tip);
+      cell.style.cursor = 'pointer';
+    }
+
+    container.appendChild(cell);
+  }
+
+  // render case list
+  renderCaseList();
+}
+
+function renderCaseList() {
+  const el = document.getElementById('case-list');
+  const active = CASES.filter(c => c.status !== '交件完成');
+  el.innerHTML = active.map(c => {
+    const col = COLORS[c.colorIdx];
+    return `<div class="case-item">
+      <div class="case-color-bar" style="background:${col.bar}"></div>
+      <div class="case-info">
+        <div class="case-name">${c.name}</div>
+        <div class="case-detail">${c.type}</div>
+      </div>
+      <div class="case-dates">
+        <span>製作期間　${fmtDate(c.start)} ～ ${fmtDate(c.end)}</span>
+        <span>預計交件　${fmtDate(c.due)}</span>
+      </div>
+      <div class="status-pill" style="background:${col.light};color:${col.text}">${c.status}</div>
+    </div>`;
+  }).join('');
+  if (active.length === 0) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:12px 4px;font-weight:300;">目前無進行中的案件</div>';
+  }
+}
+
+// ── 月份切換 ─────────────────────────────────────────
+document.getElementById('prev-btn').onclick = () => {
+  viewMonth--;
+  if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+  render();
+};
+document.getElementById('next-btn').onclick = () => {
+  viewMonth++;
+  if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+  render();
+};
+
+// ── 載入 CSV 並渲染 ───────────────────────────────────
+function parseCSV(text) {
+  const lines = text.trim().split(/\r?\n/);
+  // 第1列為說明、第2列為欄位名稱、第3列起為資料
+  const dataLines = lines.slice(2);
+  return dataLines
+    .map((line, idx) => {
+      // 處理欄位中可能含逗號的情況（用雙引號包住）
+      const cols = [];
+      let cur = '', inQuote = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') { inQuote = !inQuote; }
+        else if (ch === ',' && !inQuote) { cols.push(cur.trim()); cur = ''; }
+        else { cur += ch; }
+      }
+      cols.push(cur.trim());
+      if (cols.length < 7 || !cols[0]) return null;
+      return {
+        id: idx,
+        name:     cols[0],
+        type:     cols[1],
+        start:    cols[2],
+        end:      cols[3],
+        due:      cols[4],
+        status:   cols[5],
+        colorIdx: parseInt(cols[6]) || 0,
+      };
+    })
+    .filter(Boolean);
+}
+
+function showLoading(msg) {
+  document.getElementById('cal-days').innerHTML =
+    `<div style="grid-column:1/-1;padding:2rem;text-align:center;font-size:13px;color:var(--muted);">${msg}</div>`;
+  document.getElementById('case-list').innerHTML = '';
+}
+
+async function loadAndRender() {
+  showLoading('載入資料中…');
+  try {
+    const res = await fetch(CSV_URL);
+    if (!res.ok) throw new Error('fetch failed');
+    const text = await res.text();
+    CASES = parseCSV(text);
+    render();
+  } catch (e) {
+    showLoading('資料載入失敗，請稍後再試。');
+    console.error(e);
+  }
+}
+
+loadAndRender();
+</script>
+</body>
+</html>
