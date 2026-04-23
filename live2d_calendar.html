@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>委託排程表</title>
+<title>Commission Schedule</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -566,12 +566,16 @@ function parseCSV(text) {
       break;
     }
   }
-  if (headerIdx === -1) return [];
+  if (headerIdx === -1) return { cases: [], updated: '' };
 
   const headers = splitCSVLine(lines[headerIdx]).map(h => h.trim().toLowerCase());
   const get = (cols, key) => (cols[headers.indexOf(key)] || '').trim();
 
-  return lines.slice(headerIdx + 1)
+  // 從第一筆資料列讀取 updated 欄位
+  const firstDataCols = splitCSVLine(lines[headerIdx + 1] || '');
+  const updated = get(firstDataCols, 'updated');
+
+  const cases = lines.slice(headerIdx + 1)
     .map((line, idx) => {
       const cols = splitCSVLine(line);
       const name = get(cols, 'name');
@@ -588,6 +592,8 @@ function parseCSV(text) {
       };
     })
     .filter(Boolean);
+
+  return { cases, updated };
 }
 
 function showLoading(msg) {
@@ -602,10 +608,19 @@ async function loadAndRender() {
     const res = await fetch(CSV_URL);
     if (!res.ok) throw new Error('fetch failed');
     const text = await res.text();
-    CASES = parseCSV(text);
-    const d = new Date();
-    const dateStr = `${d.getFullYear()} / ${String(d.getMonth()+1).padStart(2,'0')} / ${String(d.getDate()).padStart(2,'0')}`;
-    document.getElementById('last-updated').textContent = '最後更新：' + dateStr + '　　色塊為製作期間，圓點為預計完成日';
+    const parsed = parseCSV(text);
+    CASES = parsed.cases;
+    let displayDate = parsed.updated;
+    if (displayDate) {
+      // 格式化 YYYY-MM-DD → YYYY / MM / DD
+      const parts = displayDate.split('-');
+      if (parts.length === 3) displayDate = parts[0] + ' / ' + parts[1] + ' / ' + parts[2];
+    } else {
+      // fallback：使用當天日期
+      const d = new Date();
+      displayDate = `${d.getFullYear()} / ${String(d.getMonth()+1).padStart(2,'0')} / ${String(d.getDate()).padStart(2,'0')}`;
+    }
+    document.getElementById('last-updated').textContent = '最後更新：' + displayDate + '　　色塊為製作期間，圓點為預計完成日';
     render();
   } catch (e) {
     showLoading('資料載入失敗，請稍後再試。');
