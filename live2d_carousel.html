@@ -28,70 +28,63 @@ body {
   margin: 0 auto;
 }
 
-/* ── Header ── */
-.header {
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--line);
-}
-
-.header h1 {
-  font-family: 'DM Serif Display', serif;
-  font-size: 26px;
-  font-weight: 400;
-  letter-spacing: -0.02em;
-}
-
 /* ── Carousel ── */
-.carousel-wrap {
-  position: relative;
-}
+.carousel-wrap { position: relative; }
 
-/* 主視窗 */
 .carousel-main {
   width: 100%;
   aspect-ratio: 16 / 9;
   background: #000;
   border-radius: var(--radius);
   overflow: hidden;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   position: relative;
 }
 
 .carousel-main iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
+  width: 100%; height: 100%;
+  border: none; display: block;
 }
 
 .carousel-main .placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
   color: rgba(255,255,255,0.3);
-  font-size: 14px;
-  font-weight: 300;
+  font-size: 14px; font-weight: 300;
 }
+
+/* ── 備註說明 ── */
+.video-caption {
+  min-height: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.8;
+}
+
+.video-caption:empty { display: none; }
+
+.video-caption a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity 0.12s;
+}
+
+.video-caption a:hover { opacity: 0.6; }
 
 /* ── 左右箭頭 ── */
 .arrow {
   position: absolute;
-  top: 50%;
+  top: calc(50% - 1.5rem); /* 讓箭頭對齊主播放器中央 */
   transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
+  width: 40px; height: 40px;
+  border-radius: 50%; border: none;
   background: rgba(255,255,255,0.92);
-  color: var(--ink);
-  font-size: 18px;
+  color: var(--ink); font-size: 18px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   z-index: 10;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   transition: background 0.12s, opacity 0.12s;
@@ -104,76 +97,55 @@ body {
 .arrow-right { right: -18px; }
 
 /* ── 縮圖列 ── */
-.thumbs-outer {
-  overflow: hidden;
-  position: relative;
-}
+.thumbs-outer { overflow: hidden; position: relative; }
 
 .thumbs-track {
-  display: flex;
-  gap: 10px;
+  display: flex; gap: 10px;
   transition: transform 0.35s cubic-bezier(.4,0,.2,1);
 }
 
 .thumb {
   flex-shrink: 0;
-  width: calc((100% - 30px) / 4);  /* 4 個一排 */
+  width: calc((100% - 30px) / 4);
   aspect-ratio: 16 / 9;
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: pointer;
-  position: relative;
+  border-radius: 8px; overflow: hidden;
+  cursor: pointer; position: relative;
   border: 2px solid transparent;
   transition: border-color 0.15s, opacity 0.15s;
   background: #000;
 }
 
 .thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: opacity 0.15s;
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
 }
 
 .thumb:hover { opacity: 0.85; }
 .thumb.active { border-color: var(--ink); }
 
-/* 縮圖播放圖示 */
 .thumb-play {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.15s;
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.15s;
 }
 
 .thumb:hover .thumb-play { opacity: 1; }
 
 .thumb-play svg {
-  width: 28px;
-  height: 28px;
+  width: 28px; height: 28px;
   filter: drop-shadow(0 1px 4px rgba(0,0,0,0.5));
 }
 
 /* ── 計數器 ── */
 .counter {
-  text-align: center;
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 10px;
-  font-weight: 300;
+  text-align: center; font-size: 12px;
+  color: var(--muted); margin-top: 10px; font-weight: 300;
 }
 
 /* ── Loading ── */
 .loading-msg {
-  text-align: center;
-  font-size: 13px;
-  color: var(--muted);
-  padding: 3rem 0;
-  font-weight: 300;
+  text-align: center; font-size: 13px;
+  color: var(--muted); padding: 3rem 0; font-weight: 300;
 }
 
 @media (max-width: 600px) {
@@ -195,26 +167,27 @@ body {
 </div>
 
 <script>
-// ── Google Sheets CSV 連結（請替換成您的連結）──────────
+// ── Google Sheets CSV 連結 ────────────────────────────
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSMX1kwARqorZfyQB3QgeNezFNX_kmd6WAuRVzBcvoSQ_ciu7JlLQ9hKXAwiNWwQYCb6sDjsFEQe00V/pub?gid=0&single=true&output=csv';
-
-// ── 示範資料（串接試算表後會被取代）─────────────────
-const DEMO_VIDEOS = [
-  { id: 'dQw4w9WgXcQ' },
-  { id: 'dQw4w9WgXcQ' },
-  { id: 'dQw4w9WgXcQ' },
-  { id: 'dQw4w9WgXcQ' },
-  { id: 'dQw4w9WgXcQ' },
-];
 
 // ── 狀態 ─────────────────────────────────────────────
 let VIDEOS = [];
 let currentIdx = 0;
-const THUMB_VISIBLE = 4; // 縮圖列一次顯示幾個
+const THUMB_VISIBLE = 4;
 
-// ── YouTube 縮圖 URL ──────────────────────────────────
+// ── YouTube 縮圖 ──────────────────────────────────────
 function thumbUrl(id) {
   return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+}
+
+// ── Markdown 連結解析 → HTML ──────────────────────────
+// 支援：[文字](網址) 以及純文字混合
+function parseMarkdown(text) {
+  if (!text) return '';
+  // 將 [文字](網址) 轉成 <a>
+  return text.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, (_, label, url) => {
+    return `<a href="${url}" target="_blank" rel="noopener">${label}</a>`;
+  });
 }
 
 // ── 渲染 ─────────────────────────────────────────────
@@ -231,6 +204,7 @@ function buildCarousel() {
       <div class="carousel-main" id="main-player">
         <div class="placeholder">選擇下方縮圖播放</div>
       </div>
+      <div class="video-caption" id="video-caption"></div>
       <button class="arrow arrow-left"  id="arrow-left"  onclick="shiftThumbs(-1)">&#8249;</button>
       <button class="arrow arrow-right" id="arrow-right" onclick="shiftThumbs(1)">&#8250;</button>
       <div class="thumbs-outer" id="thumbs-outer">
@@ -257,7 +231,7 @@ function buildCarousel() {
 function selectVideo(idx) {
   currentIdx = idx;
 
-  // 更新主播放器
+  // 主播放器
   const player = document.getElementById('main-player');
   player.innerHTML = `<iframe
     src="https://www.youtube.com/embed/${VIDEOS[idx].id}?autoplay=1&rel=0"
@@ -265,15 +239,20 @@ function selectVideo(idx) {
     allowfullscreen>
   </iframe>`;
 
-  // 更新縮圖 active 狀態
+  // 備註說明
+  const caption = document.getElementById('video-caption');
+  const v = VIDEOS[idx];
+  const lines = [v.line1, v.line2, v.line3].filter(Boolean);
+  caption.innerHTML = lines.map(l => `<div>${parseMarkdown(l)}</div>`).join('');
+
+  // 縮圖 active
   document.querySelectorAll('.thumb').forEach((t, i) => {
     t.classList.toggle('active', i === idx);
   });
 
-  // 更新計數器
+  // 計數器
   document.getElementById('counter').textContent = `${idx + 1} / ${VIDEOS.length}`;
 
-  // 確保選中的縮圖在可視範圍內
   scrollToThumb(idx);
 }
 
@@ -285,14 +264,14 @@ function getThumbWidth() {
   if (!track) return 0;
   const thumb = track.querySelector('.thumb');
   if (!thumb) return 0;
-  return thumb.offsetWidth + 10; // width + gap
+  return thumb.offsetWidth + 10;
 }
 
 function shiftThumbs(dir) {
   const maxOffset = Math.max(0, VIDEOS.length - THUMB_VISIBLE);
   thumbOffset = Math.min(maxOffset, Math.max(0, thumbOffset + dir));
-  const track = document.getElementById('thumbs-track');
-  track.style.transform = `translateX(-${thumbOffset * getThumbWidth()}px)`;
+  document.getElementById('thumbs-track').style.transform =
+    `translateX(-${thumbOffset * getThumbWidth()}px)`;
   updateArrows();
 }
 
@@ -334,38 +313,38 @@ function splitCSVLine(line) {
 function parseCSV(text) {
   const lines = text.trim().split(/\r?\n/).filter(l => l.trim());
 
-  // 找 header 列（含 'video_id'）
   let headerIdx = -1;
   for (let i = 0; i < lines.length; i++) {
     const cols = splitCSVLine(lines[i]);
     if (cols.some(c => c.trim().toLowerCase() === 'video_id')) {
-      headerIdx = i;
-      break;
+      headerIdx = i; break;
     }
   }
   if (headerIdx === -1) return [];
 
   const headers = splitCSVLine(lines[headerIdx]).map(h => h.trim().toLowerCase());
-  const get = (cols, key) => (cols[headers.indexOf(key)] || '').trim();
+  const get = (cols, key) => {
+    const i = headers.indexOf(key);
+    return (i !== -1 ? cols[i] : '') || '';
+  };
 
   return lines.slice(headerIdx + 1)
     .map(line => {
       const cols = splitCSVLine(line);
       const id = get(cols, 'video_id');
       if (!id) return null;
-      return { id };
+      return {
+        id,
+        line1: get(cols, 'line1'),
+        line2: get(cols, 'line2'),
+        line3: get(cols, 'line3'),
+      };
     })
     .filter(Boolean);
 }
 
 // ── 載入 ─────────────────────────────────────────────
 async function loadAndRender() {
-  if (CSV_URL === 'YOUR_GOOGLE_SHEETS_CSV_URL_HERE') {
-    // 尚未設定試算表，使用示範資料
-    VIDEOS = DEMO_VIDEOS;
-    buildCarousel();
-    return;
-  }
   try {
     const res = await fetch(CSV_URL);
     if (!res.ok) throw new Error('fetch failed');
